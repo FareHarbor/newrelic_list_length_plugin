@@ -1,0 +1,15 @@
+newrelic:
+  license_key: 'YOUR_LICENSE_KEY_HERE'
+  #
+  # Set to '1' for verbose output, remove for normal output.
+  # All output goes to stdout/stderr.
+  # verbose: 1
+
+# Agent Configuration:
+agents:
+  list_length:
+    lists:
+      - Example
+    redis_host: '127.0.0.1'
+    redis_port: 6379
+    redis_database: 0

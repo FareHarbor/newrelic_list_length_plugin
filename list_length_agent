@@ -1,0 +1,47 @@
+#! /usr/bin/env ruby
+
+#
+# New Relic plugin to monitor the lengths of lists in Redis.
+#
+
+require "rubygems"
+require "bundler/setup"
+
+require "newrelic_plugin"
+require "redis"
+
+
+module ListLengthAgent
+
+  class Agent < NewRelic::Plugin::Agent::Base
+
+    agent_guid "com.fareharbor.list_length"
+    agent_version "1.0.1"
+    agent_config_options :lists  # names of lists to monitor
+    agent_config_options :redis_host, :redis_port, :redis_database
+    agent_human_labels("List Length Agent") { "Lengths of lists" }
+
+    def redis_connection
+      return Redis.new(:host => redis_host, :port => redis_port, :db => redis_database)
+    end
+
+    def get_length(list)
+      @cache ||= redis_connection
+      return @cache.llen(list)
+    end
+
+    def poll_cycle
+      lists.each do |list|
+        report_metric list, "Value", get_length(list)
+      end
+    end
+
+  end
+
+  # Register this agent with the component.
+  NewRelic::Plugin::Setup.install_agent :list_length, ListLengthAgent
+
+  # Launch the agent; this never returns.
+  NewRelic::Plugin::Run.setup_and_run
+
+end
