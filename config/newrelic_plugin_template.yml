@@ -8,6 +8,7 @@ newrelic:
 # Agent Configuration:
 agents:
   list_length:
+    environment: 'development'
     lists:
       - Example
     redis_host: '127.0.0.1'
